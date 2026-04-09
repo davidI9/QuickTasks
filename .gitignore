@@ -1,1 +1,53 @@
-/PLAN.md
+# --- Build / CMake ---
+build/
+build-*/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+_deps/
+compile_commands.json
+
+# vcpkg (árbol local si usas manifest mode en-repo)
+vcpkg_installed/
+
+# --- Compilados / enlazado ---
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+
+# --- Depuración / sanitizers ---
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# --- IDEs y editores ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.cproject
+.settings/
+*.code-workspace
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+.directory
+
+# --- Otros ---
+*.log
+.cache/
