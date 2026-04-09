@@ -51,6 +51,26 @@ target_link_libraries(task_calendar_persistence
 
 target_compile_features(task_calendar_persistence PUBLIC cxx_std_20)
 
+add_library(task_calendar_application
+    src/application/handlers/GetCalendarHandler.cpp
+    src/application/handlers/AddTaskCalendarHandler.cpp
+    src/application/handlers/RemoveTaskCalendarHandler.cpp
+    src/application/handlers/EditTaskCalendarHandler.cpp
+    src/application/handlers/GetTaskListHandler.cpp
+    src/application/handlers/AddTaskBarHandler.cpp
+    src/application/handlers/RemoveTaskBarHandler.cpp
+    src/application/handlers/EditTaskBarHandler.cpp
+    src/application/handlers/SetFeaturedTaskHandler.cpp
+)
+
+target_include_directories(task_calendar_application PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+)
+
+target_link_libraries(task_calendar_application PUBLIC task_calendar_domain)
+
+target_compile_features(task_calendar_application PUBLIC cxx_std_20)
+
 add_executable(domain_tests
     tests/domain/test_domain_main.cpp
 )
@@ -62,3 +82,9 @@ add_executable(persistence_tests
 )
 target_link_libraries(persistence_tests PRIVATE task_calendar_persistence)
 target_compile_features(persistence_tests PRIVATE cxx_std_20)
+
+add_executable(application_tests
+    tests/application/test_application_main.cpp
+)
+target_link_libraries(application_tests PRIVATE task_calendar_application)
+target_compile_features(application_tests PRIVATE cxx_std_20)

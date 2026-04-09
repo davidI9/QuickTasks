@@ -10,17 +10,18 @@ BUILD_ASAN_DIR ?= build-asan
 
 CMAKE_DEPS := CMakeLists.txt
 
-.PHONY: all help configure build rebuild test test-domain test-persistence test-asan clean clean-asan clean-all distclean
+.PHONY: all help configure build rebuild test test-domain test-persistence test-application test-asan clean clean-asan clean-all distclean
 
 help:
 	@echo "Comandos principales:"
 	@echo "  make configure   — fuerza CMake configure en $(BUILD_DIR)"
 	@echo "  make build       — configure si falta o CMakeLists.txt cambió, luego compila"
 	@echo "  make rebuild     — distclean + configure + build"
-	@echo "  make test              — global: test-domain + test-persistence + test-asan (+ más)"
-	@echo "  make test-domain       — solo dominio: $(BUILD_DIR)/domain_tests"
-	@echo "  make test-persistence  — solo JSON/repos: $(BUILD_DIR)/persistence_tests"
-	@echo "  make test-asan         — solo ASan/UBSan: build en $(BUILD_ASAN_DIR) + domain_tests"
+	@echo "  make test                — global: domain + persistence + application + asan (+ más)"
+	@echo "  make test-domain         — solo dominio: $(BUILD_DIR)/domain_tests"
+	@echo "  make test-persistence    — solo JSON/repos: $(BUILD_DIR)/persistence_tests"
+	@echo "  make test-application    — solo handlers/commands: $(BUILD_DIR)/application_tests"
+	@echo "  make test-asan           — solo ASan/UBSan: build en $(BUILD_ASAN_DIR) + domain_tests"
 	@echo "  make clean       — borra solo $(BUILD_DIR)"
 	@echo "  make clean-asan  — borra solo $(BUILD_ASAN_DIR)"
 	@echo "  make clean-all   — borra $(BUILD_DIR) y $(BUILD_ASAN_DIR)"
@@ -54,7 +55,11 @@ test-persistence: build
 	@echo "== persistence_tests =="
 	@$(BUILD_DIR)/persistence_tests
 
-test: test-domain test-persistence test-asan
+test-application: build
+	@echo "== application_tests =="
+	@$(BUILD_DIR)/application_tests
+
+test: test-domain test-persistence test-application test-asan
 
 test-asan:
 	$(CMAKE) -S . -B $(BUILD_ASAN_DIR) \
