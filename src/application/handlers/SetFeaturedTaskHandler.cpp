@@ -4,11 +4,12 @@
 
 namespace application {
 
-SetFeaturedTaskHandler::SetFeaturedTaskHandler(domain::IFeaturedTaskRepository& featuredTaskRepository)
-    : featured_(featuredTaskRepository) {}
+SetFeaturedTaskHandler::SetFeaturedTaskHandler(domain::ITaskListRepository& taskListRepository, domain::IFeaturedTaskRepository& featuredTaskRepository)
+    : tasks_(taskListRepository), featured_(featuredTaskRepository) {}
 
-void SetFeaturedTaskHandler::handle(const commands::SetFeaturedTaskCommand& cmd) {
+domain::TaskList SetFeaturedTaskHandler::handle(const commands::SetFeaturedTaskCommand& cmd) {
     featured_.saveFeatured(domain::TaskId(cmd.taskUuid));
+    return tasks_.load();
 }
 
 } // namespace application

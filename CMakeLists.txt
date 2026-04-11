@@ -88,3 +88,10 @@ add_executable(application_tests
 )
 target_link_libraries(application_tests PRIVATE task_calendar_application)
 target_compile_features(application_tests PRIVATE cxx_std_20)
+
+add_executable(task-calendar
+    main.cpp
+    src/infrastructure/controllers/CliController.cpp
+)
+target_link_libraries(task-calendar PRIVATE task_calendar_application task_calendar_persistence)
+target_compile_features(task-calendar PRIVATE cxx_std_20)

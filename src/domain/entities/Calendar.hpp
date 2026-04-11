@@ -22,7 +22,7 @@ public:
 private:
     static int daysInMonth(int month, int year) noexcept;
     static bool isLeapYear(int y) noexcept;
-    static int mondayZeroWeekdayFirstOfMonth(int year, int month);
+    static int mondayZeroWeekdayFirstOfMonth(int year, int month) noexcept;
     static void parseMonthYear(std::string_view text, int& outMonth, int& outYear);
 
     std::string monthYear_;

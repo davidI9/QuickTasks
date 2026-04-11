@@ -151,16 +151,22 @@ void testGetTaskListAndBarCrud() {
 }
 
 void testSetFeatured() {
+    InMemoryTaskListRepository tasks;
     InMemoryFeaturedTaskRepository featured;
-    SetFeaturedTaskHandler handler(featured);
+    
+    SetFeaturedTaskHandler handler(tasks, featured); 
+    
     assert(!featured.loadFeatured().has_value());
 
     const TaskId id("bbbbbbbb-cccc-4ddd-eeee-ffffffffffff");
-    handler.handle(SetFeaturedTaskCommand{.taskUuid = id.value()});
+    
+    const domain::TaskList updatedList = handler.handle(SetFeaturedTaskCommand{.taskUuid = id.value()});
+    
     assert(featured.loadFeatured().has_value());
     assert(featured.loadFeatured()->value() == id.value());
-}
 
+    (void)updatedList;
+}
 } // namespace
 
 int main() {

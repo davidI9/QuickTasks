@@ -1,17 +1,20 @@
 #pragma once
 
 #include "application/commands/SetFeaturedTaskCommand.hpp"
+#include "domain/entities/TaskList.hpp"
 #include "domain/repositories/IFeaturedTaskRepository.hpp"
+#include "domain/repositories/ITaskListRepository.hpp"
 
 namespace application {
 
 class SetFeaturedTaskHandler {
 public:
-    explicit SetFeaturedTaskHandler(domain::IFeaturedTaskRepository& featuredTaskRepository);
+    SetFeaturedTaskHandler(domain::ITaskListRepository& taskListRepository, domain::IFeaturedTaskRepository& featuredTaskRepository);
 
-    void handle(const commands::SetFeaturedTaskCommand& cmd);
+    [[nodiscard]] domain::TaskList handle(const commands::SetFeaturedTaskCommand& cmd);
 
 private:
+    domain::ITaskListRepository& tasks_;
     domain::IFeaturedTaskRepository& featured_;
 };
 

@@ -1,14 +1,15 @@
 #pragma once
 
+#include <optional>
 #include <string>
 
 namespace application::commands {
 
 struct EditTaskCalendarCommand {
     std::string taskUuid;
-    std::string newName;
-    std::string newDueDate;
-    bool newCompleted{};
+    std::optional<std::string> newName;
+    std::optional<std::string> newDueDate;
+    std::optional<bool> newCompleted;
     std::string monthYear;
 };
 

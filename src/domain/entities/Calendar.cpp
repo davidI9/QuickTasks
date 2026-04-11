@@ -23,14 +23,14 @@ bool dateIsBefore(int y1, int m1, int d1, std::chrono::year_month_day today) {
 
 } // namespace
 
-bool Calendar::isLeapYear(int y) noexcept {
-    if (y % 4 != 0) {
+bool Calendar::isLeapYear(int year) noexcept {
+    if (year % 4 != 0) {
         return false;
     }
-    if (y % 100 != 0) {
+    if (year % 100 != 0) {
         return true;
     }
-    return (y % 400) == 0;
+    return (year % 400) == 0;
 }
 
 int Calendar::daysInMonth(int month, int year) noexcept {
@@ -44,16 +44,11 @@ int Calendar::daysInMonth(int month, int year) noexcept {
     return 0;
 }
 
-int Calendar::mondayZeroWeekdayFirstOfMonth(int y, int mon) {
+int Calendar::mondayZeroWeekdayFirstOfMonth(int y, int m) noexcept {
     using namespace std::chrono;
-    const year_month_day first{year{y} / month{static_cast<unsigned>(mon)} / day{1}};
-    const weekday wd{sys_days{first}};
-    const days diff = wd - Monday;
-    const auto count = diff.count();
-    if (count < 0 || count > 6) {
-        throw std::logic_error("Calendar: weekday mapping out of range");
-    }
-    return static_cast<int>(count);
+    
+    const auto first_day = sys_days{year{y} / m / 1};
+    return (weekday{first_day} - Monday).count();
 }
 
 void Calendar::parseMonthYear(std::string_view text, int& outMonth, int& outYear) {

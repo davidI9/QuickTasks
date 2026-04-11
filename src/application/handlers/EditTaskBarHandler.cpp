@@ -15,17 +15,39 @@ EditTaskBarHandler::EditTaskBarHandler(domain::ITaskListRepository& taskListRepo
 domain::TaskList EditTaskBarHandler::handle(const commands::EditTaskBarCommand& cmd) {
     domain::TaskList list = tasks_.load();
     const domain::TaskId id(cmd.taskUuid);
-    if (list.findByUuid(id) == nullptr) {
+    domain::Task* existingTask = list.findByUuid(id);
+    if (!existingTask) {
         throw std::runtime_error("EditTaskBarHandler: task not found");
     }
 
-    const domain::Task updated(
-        id,
-        domain::TaskName(cmd.newName),
-        domain::TaskDueDate(cmd.newDueDate),
-        domain::TaskCompleted{cmd.newCompleted});
+    // Create a copy to modify
+    domain::Task updated = *existingTask;
 
-    tasks_.updateTask(updated);
+    // Update only provided fields
+    if (cmd.newName.has_value()) {
+        updated.setName(domain::TaskName(*cmd.newName));
+    }
+    if (cmd.newDueDate.has_value()) {
+        updated.setDueDate(domain::TaskDueDate(*cmd.newDueDate));
+        
+        // Re-insert to maintain order. Si devuelve false, cortamos de raíz.
+        if (!list.remove(id)) {
+            throw std::runtime_error("Error interno: No se pudo eliminar la tarea de la lista para reordenarla.");
+        }
+        
+        list.insert(std::move(updated));
+        tasks_.save(list);
+        return tasks_.load();
+    }
+    if (cmd.newCompleted.has_value()) {
+        updated.setCompleted(domain::TaskCompleted(*cmd.newCompleted));
+    }
+
+    // If due date changed, we already handled re-insertion
+    if (!cmd.newDueDate.has_value()) {
+        tasks_.updateTask(updated);
+    }
+
     return tasks_.load();
 }
 
