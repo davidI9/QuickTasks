@@ -1,51 +1,44 @@
-import { AppState } from "./state/AppState";
-import { ThemeService } from "./services/ThemeService";
-import { BackendService } from "./services/BackendService";
-import { createCalendarWindow } from "./windows/CalendarWindow";
-import { createBarWindow } from "./windows/BarWindow";
+import { state, setError, setCalendarData, setTaskList, setFeaturedTaskId, setBarCurrentIndex, setCurrentMonthYear } from "./state/AppState.ts";
+import { ThemeService } from "./services/ThemeService.ts";
+import { BackendService } from "./services/BackendService.ts";
+import { CalendarWindow } from "./windows/CalendarWindow.ts";
+import { BarWindow } from "./windows/BarWindow.ts";
 
-const state = AppState.instance;
 const backend = new BackendService();
 const themeService = new ThemeService();
 
-async function initialize(): Promise<void> {
-    await themeService.loadTheme();
-    await themeService.injectCssVariables();
+async function initData() {
+    try {
+        console.log("Starting theme service initialization...");
+        await themeService.loadTheme().catch(() => console.log("Tema ignorado."));
+        
+        setCurrentMonthYear("04/2026");
+        console.log("Fetching calendar and task data...");
+        const [calendar, taskList] = await Promise.all([
+            backend.getCalendar(state.currentMonthYear.value || "04/2026"),
+            backend.getTaskList()
+        ]);
+        console.log("Data fetched, updating state...");
 
-    const calendarWindow = createCalendarWindow(state, backend);
-    const barWindow = createBarWindow(state, backend);
+        setCalendarData(calendar);
+        setTaskList(taskList);
+        setFeaturedTaskId(calendar.featuredTaskId ?? taskList.featuredTaskId ?? null);
+        setBarCurrentIndex(0);
 
-    state.mode.onChange((mode: "calendar" | "bar") => {
-        calendarWindow.visible = mode === "calendar";
-        barWindow.visible = mode === "bar";
-    });
-
-    state.currentMonthYear.onChange(async (monthYear: string) => {
-        if (state.mode.value === "calendar") {
-            try {
-                const calendar = await backend.getCalendar(monthYear);
-                state.calendarData.set(calendar);
-                state.featuredTaskId.set(calendar.featuredTaskId);
-            } catch (error) {
-                state.error.set(error instanceof Error ? error.message : String(error));
-            }
-        }
-    });
-
-    state.mode.set("calendar");
-    state.currentMonthYear.set("04/2026");
-    await Promise.all([backend.getCalendar(state.currentMonthYear.value), backend.getTaskList()])
-        .then(([calendar, taskList]) => {
-            state.calendarData.set(calendar);
-            state.taskList.set(taskList);
-            state.featuredTaskId.set(calendar.featuredTaskId ?? taskList.featuredTaskId);
-            state.barCurrentIndex.set(0);
-        })
-        .catch((error) => {
-            state.error.set(error instanceof Error ? error.message : String(error));
-        });
+        console.log("Task Calendar initialized successfully");
+    } catch (error) {
+        console.error("Initialization failed:", error);
+    }
 }
 
-initialize().catch((error) => {
-    console.error(error);
-});
+// Arrancamos la carga de datos en segundo plano
+initData();
+
+// LA MAGIA: Simplemente exportamos la configuración por defecto y AGS hace el resto.
+// Esto evita tener que importar "App" y romper GJS.
+export default {
+    windows: [
+        CalendarWindow,
+        BarWindow
+    ]
+};

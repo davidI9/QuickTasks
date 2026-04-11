@@ -1,4 +1,4 @@
-import { Utils } from "ags";
+import { execAsync } from "../lib/process";
 import { CalendarJSON } from "../types/CalendarJSON";
 import { TaskListJSON } from "../types/TaskListJSON";
 
@@ -26,7 +26,7 @@ export class BackendService {
 
     private async execBackend(args: string[]): Promise<BackendResponse> {
         const command = this.buildCommand(args);
-        const stdout = await Utils.execAsync(command);
+        const stdout = await execAsync(command);
         const raw = typeof stdout === "string" ? stdout : String(stdout);
         const parsed = JSON.parse(raw) as BackendResponse;
         if (parsed.type === "error") {

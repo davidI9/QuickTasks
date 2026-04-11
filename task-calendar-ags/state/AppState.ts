@@ -1,24 +1,58 @@
-import { Variable } from "ags";
-import { CalendarJSON } from "../types/CalendarJSON";
-import { TaskListJSON } from "../types/TaskListJSON";
+import { createState } from "../lib/state";
 
-export class AppState {
-    static instance = new AppState();
-
-    mode = new Variable<"calendar" | "bar">("calendar");
-    currentMonthYear = new Variable<string>("04/2026");
-    calendarData = new Variable<CalendarJSON | null>(null);
-    taskList = new Variable<TaskListJSON | null>(null);
-    featuredTaskId = new Variable<string | null>(null);
-    barCurrentIndex = new Variable<number>(0);
-    loading = new Variable<boolean>(false);
-    error = new Variable<string | null>(null);
-
-    toggleMode(): void {
-        this.mode.set(this.mode.value === "calendar" ? "bar" : "calendar");
-    }
-
-    setFeaturedTaskId(id: string | null): void {
-        this.featuredTaskId.set(id);
-    }
+interface AppStateType {
+    mode: any; // Variable
+    currentMonthYear: any; // Variable
+    calendarData: any; // Variable
+    taskList: any; // Variable
+    featuredTaskId: any; // Variable
+    barCurrentIndex: any; // Variable
+    loading: any; // Variable
+    error: any; // Variable
 }
+
+const initialState: AppStateType = {
+    mode: "calendar",
+    currentMonthYear: "04/2026",
+    calendarData: null,
+    taskList: null,
+    featuredTaskId: null,
+    barCurrentIndex: 0,
+    loading: false,
+    error: null,
+};
+
+export const state = createState(initialState);
+
+export function toggleMode(): void {
+    state.mode.set(state.mode.value === "calendar" ? "bar" : "calendar");
+}
+
+export function setFeaturedTaskId(id: string | null): void {
+    state.featuredTaskId.set(id);
+}
+
+export function setCurrentMonthYear(monthYear: string): void {
+    state.currentMonthYear.set(monthYear);
+}
+
+export function setCalendarData(data: any): void {
+    state.calendarData.set(data);
+}
+
+export function setTaskList(list: any): void {
+    state.taskList.set(list);
+}
+
+export function setBarCurrentIndex(index: number): void {
+    state.barCurrentIndex.set(index);
+}
+
+export function setLoading(loading: boolean): void {
+    state.loading.set(loading);
+}
+
+export function setError(error: string | null): void {
+    state.error.set(error);
+}
+
