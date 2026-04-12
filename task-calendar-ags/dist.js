@@ -675,10 +675,10 @@ var BarWidget = () => Widget11.Box({
 var BarWindow = Widget12.Window({
   name: "bar",
   className: "bar",
-  layer: "top",
+  layer: "bottom",
   exclusivity: "exclusive",
   anchor: ["top", "left", "right"],
-  margins: [5, 10],
+  margins: [20, 20, -10, 70],
   keymode: "on-demand",
   css: "background-color: transparent;",
   setup: (self) => self.hook(state.mode, () => {
