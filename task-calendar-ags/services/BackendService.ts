@@ -2,7 +2,7 @@ import { execAsync } from "../lib/process";
 import { CalendarJSON } from "../types/CalendarJSON";
 import { TaskListJSON } from "../types/TaskListJSON";
 
-export const BIN_PATH = "/home/david/Codigos/quickTasks/build/task-calendar";
+export const BIN_PATH = "~/QuickTasks/build/task-calendar";
 
 export interface ErrorJSON {
     type: "error";
