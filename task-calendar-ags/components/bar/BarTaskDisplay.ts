@@ -15,7 +15,7 @@ export const BarTaskDisplay = () => Widget.Box({
             const task = list[currentIndex];
 
             if (!task) {
-                self.children = [Widget.Label("No hay tareas")];
+                self.children = [Widget.Label("There are no tasks to display.")];
                 return;
             }
 

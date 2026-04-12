@@ -14,7 +14,7 @@ export const BarWidget = () => Widget.Box({
         Widget.Label({ label: "✦", className: "bar-star" }),
         BarTaskDisplay(),
         Widget.Button({
-            label: "Calendario",
+            label: "Calendar",
             className: "bar-toggle-button",
             onClicked: async () => {
                 const cal = await backend.getCalendar(state.currentMonthYear.value);

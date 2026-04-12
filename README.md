@@ -57,6 +57,6 @@ bind = SUPER, T, exec, ~/.local/bin/task-calendar-launch
 The AGS frontend is located in the task-calendar-ags/ directory, and the C++ backend handles the rest of the repository.
 
 ## Notes
-The frontend expects the binary to be located at ~/QuickTasks/build/task-calendar.
+The frontend expects the binary to be located at ```~/QuickTasks/build/task-calendar```.
 
-If you change the project location, make sure to update the path in task-calendar-ags/services/BackendService.ts.
+If you change the project location, make sure to update the path in ```task-calendar-ags/services/BackendService.ts``` and ```task-calendar-ags/dist.js```

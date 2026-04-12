@@ -1,8 +1,9 @@
 import { execAsync } from "../lib/process";
 import { CalendarJSON } from "../types/CalendarJSON";
 import { TaskListJSON } from "../types/TaskListJSON";
+import GLib from 'gi://GLib';
 
-export const BIN_PATH = "~/QuickTasks/build/task-calendar";
+export const BIN_PATH = `${GLib.get_home_dir()}/QuickTasks/build/task-calendar`;
 
 export interface ErrorJSON {
     type: "error";

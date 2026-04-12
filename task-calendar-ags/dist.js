@@ -118,7 +118,8 @@ var ThemeService = class {
 };
 
 // services/BackendService.ts
-var BIN_PATH = `home/${username}/QuickTasks/build/task-calendar`;
+import GLib2 from "gi://GLib";
+var BIN_PATH = `${GLib2.get_home_dir()}/QuickTasks/build/task-calendar`;
 var BackendService = class {
   buildCommand(args) {
     return [BIN_PATH, ...args].map((part) => {
@@ -263,7 +264,7 @@ function showEditTaskDialog(id, name, date) {
 }
 var EditTaskDialog = () => {
   currentEditErrorLabel = Widget2.Label({ label: "", className: "dialog-error" });
-  currentEditNameInput = Widget2.Entry({ placeholder_text: "Task name", hexpand: true });
+  currentEditNameInput = Widget2.Entry({ placeholder_text: "Nombre de la tarea", hexpand: true });
   currentEditDueInput = Widget2.Entry({ placeholder_text: "DD/MM/YYYY", hexpand: true });
   return Widget2.Box({
     vertical: true,
@@ -386,7 +387,7 @@ function showAddTaskDialog(date) {
 }
 var AddTaskDialog = () => {
   currentErrorLabel = Widget4.Label({ label: "", className: "dialog-error" });
-  currentNameInput = Widget4.Entry({ placeholder_text: "Nombre de la tarea", hexpand: true });
+  currentNameInput = Widget4.Entry({ placeholder_text: "Task name", hexpand: true });
   currentDueInput = Widget4.Entry({ placeholder_text: "DD/MM/YYYY", hexpand: true });
   return Widget4.Box({
     vertical: true,
@@ -394,7 +395,7 @@ var AddTaskDialog = () => {
     spacing: 12,
     visible: dialogVisible.bind(),
     children: [
-      Widget4.Label({ label: "Nueva tarea", className: "dialog-title" }),
+      Widget4.Label({ label: "New Task", className: "dialog-title" }),
       currentNameInput,
       currentDueInput,
       currentErrorLabel,
@@ -404,13 +405,13 @@ var AddTaskDialog = () => {
         // ALIGN_END
         children: [
           Widget4.Button({
-            label: "Cancelar",
+            label: "Cancel",
             onClicked: () => {
               dialogVisible.setValue(false);
             }
           }),
           Widget4.Button({
-            label: "Agregar",
+            label: "Add",
             className: "bar-toggle-button",
             onClicked: async () => {
               const name = currentNameInput.text?.trim();
@@ -612,7 +613,7 @@ var BarTaskDisplay = () => Widget10.Box({
       const currentIndex = state.barCurrentIndex.value || 0;
       const task = list[currentIndex];
       if (!task) {
-        self.children = [Widget10.Label("No hay tareas")];
+        self.children = [Widget10.Label("There are no tasks to display.")];
         return;
       }
       self.children = [
@@ -665,7 +666,7 @@ var BarWidget = () => Widget11.Box({
     Widget11.Label({ label: "\u2726", className: "bar-star" }),
     BarTaskDisplay(),
     Widget11.Button({
-      label: "Calendario",
+      label: "Calendar",
       className: "bar-toggle-button",
       onClicked: async () => {
         const cal = await backend8.getCalendar(state.currentMonthYear.value);

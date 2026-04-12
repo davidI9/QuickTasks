@@ -15,7 +15,7 @@ export const CalendarWidget = () => Widget.Box({
     children: [
         CalendarHeader(),
         Widget.Button({
-            label: "Cambiar a barra",
+            label: "Bar View",
             className: "bar-toggle-button",
             onClicked: async () => {
                 const list = await backend.getTaskList();

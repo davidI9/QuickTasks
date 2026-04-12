@@ -30,7 +30,7 @@ export const EditTaskDialog = () => {
         spacing: 12,
         visible: editDialogVisible.bind(),
         children: [
-            Widget.Label({ label: "Editar tarea", className: "dialog-title" }),
+            Widget.Label({ label: "Edit Task", className: "dialog-title" }),
             currentEditNameInput,
             currentEditDueInput,
             currentEditErrorLabel,
@@ -39,17 +39,17 @@ export const EditTaskDialog = () => {
                 halign: 3, // ALIGN_END
                 children: [
                     Widget.Button({
-                        label: "Cancelar",
+                        label: "Cancel",
                         onClicked: () => { editDialogVisible.setValue(false); }
                     }),
                     Widget.Button({
-                        label: "Guardar",
+                        label: "Save",
                         className: "bar-toggle-button",
                         onClicked: async () => {
                             const name = currentEditNameInput.text?.trim();
                             const due = currentEditDueInput.text?.trim();
                             if (!name || !due) {
-                                currentEditErrorLabel.label = "Completa nombre y fecha.";
+                                currentEditErrorLabel.label = "Please fill in both name and date.";
                                 return;
                             }
                             try {

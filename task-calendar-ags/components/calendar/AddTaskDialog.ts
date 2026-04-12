@@ -19,7 +19,7 @@ export function showAddTaskDialog(date: string) {
 
 export const AddTaskDialog = () => {
     currentErrorLabel = Widget.Label({ label: "", className: "dialog-error" });
-    currentNameInput = Widget.Entry({ placeholder_text: "Nombre de la tarea", hexpand: true });
+    currentNameInput = Widget.Entry({ placeholder_text: "Task name", hexpand: true });
     currentDueInput = Widget.Entry({ placeholder_text: "DD/MM/YYYY", hexpand: true });
 
     return Widget.Box({
@@ -28,7 +28,7 @@ export const AddTaskDialog = () => {
         spacing: 12,
         visible: dialogVisible.bind(),
         children: [
-            Widget.Label({ label: "Nueva tarea", className: "dialog-title" }),
+            Widget.Label({ label: "New Task", className: "dialog-title" }),
             currentNameInput,
             currentDueInput,
             currentErrorLabel,
@@ -37,11 +37,11 @@ export const AddTaskDialog = () => {
                 halign: 3, // ALIGN_END
                 children: [
                     Widget.Button({
-                        label: "Cancelar",
+                        label: "Cancel",
                         onClicked: () => { dialogVisible.setValue(false); }
                     }),
                     Widget.Button({
-                        label: "Agregar",
+                        label: "Add",
                         className: "bar-toggle-button",
                         onClicked: async () => {
                             const name = currentNameInput.text?.trim();
