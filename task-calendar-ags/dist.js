@@ -118,7 +118,7 @@ var ThemeService = class {
 };
 
 // services/BackendService.ts
-var BIN_PATH = "~/QuickTasks/build/task-calendar";
+var BIN_PATH = `home/${username}/QuickTasks/build/task-calendar`;
 var BackendService = class {
   buildCommand(args) {
     return [BIN_PATH, ...args].map((part) => {
@@ -263,7 +263,7 @@ function showEditTaskDialog(id, name, date) {
 }
 var EditTaskDialog = () => {
   currentEditErrorLabel = Widget2.Label({ label: "", className: "dialog-error" });
-  currentEditNameInput = Widget2.Entry({ placeholder_text: "Nombre de la tarea", hexpand: true });
+  currentEditNameInput = Widget2.Entry({ placeholder_text: "Task name", hexpand: true });
   currentEditDueInput = Widget2.Entry({ placeholder_text: "DD/MM/YYYY", hexpand: true });
   return Widget2.Box({
     vertical: true,
@@ -271,7 +271,7 @@ var EditTaskDialog = () => {
     spacing: 12,
     visible: editDialogVisible.bind(),
     children: [
-      Widget2.Label({ label: "Editar tarea", className: "dialog-title" }),
+      Widget2.Label({ label: "Edit Task", className: "dialog-title" }),
       currentEditNameInput,
       currentEditDueInput,
       currentEditErrorLabel,
@@ -281,19 +281,19 @@ var EditTaskDialog = () => {
         // ALIGN_END
         children: [
           Widget2.Button({
-            label: "Cancelar",
+            label: "Cancel",
             onClicked: () => {
               editDialogVisible.setValue(false);
             }
           }),
           Widget2.Button({
-            label: "Guardar",
+            label: "Save",
             className: "bar-toggle-button",
             onClicked: async () => {
               const name = currentEditNameInput.text?.trim();
               const due = currentEditDueInput.text?.trim();
               if (!name || !due) {
-                currentEditErrorLabel.label = "Completa nombre y fecha.";
+                currentEditErrorLabel.label = "Please fill in both name and date.";
                 return;
               }
               try {
@@ -521,7 +521,7 @@ var CalendarWidget = () => Widget7.Box({
   children: [
     CalendarHeader(),
     Widget7.Button({
-      label: "Cambiar a barra",
+      label: "Bar View",
       className: "bar-toggle-button",
       onClicked: async () => {
         const list = await backend5.getTaskList();
