@@ -37,19 +37,23 @@ Look for the initialState object.
 
 Change the mode property to either "bar" or "calendar" depending on your preference:
 
+```TypeScript
 TypeScript
 const initialState: AppStateType = {
     mode: "bar", // Change this to "calendar" to open the calendar view by default
     currentMonthYear: actualMonthYear,
     // ...
 };
+```
 
 ### Hyprland Integration
 To integrate QuickTasks into Hyprland, add the following snippet to your hyprland.conf:
 
-Ini, TOML
+```bash
 bind = SUPER, T, exec, ~/.local/bin/task-calendar-launch
-Structure
+```
+
+### Structure
 The AGS frontend is located in the task-calendar-ags/ directory, and the C++ backend handles the rest of the repository.
 
 ## Notes
