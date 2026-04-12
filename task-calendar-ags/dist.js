@@ -118,7 +118,7 @@ var ThemeService = class {
 };
 
 // services/BackendService.ts
-var BIN_PATH = "/home/david/Codigos/quickTasks/build/task-calendar";
+var BIN_PATH = "~/QuickTasks/build/task-calendar";
 var BackendService = class {
   buildCommand(args) {
     return [BIN_PATH, ...args].map((part) => {
