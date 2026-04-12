@@ -1,27 +1,27 @@
-import { Widget } from "ags";
-import { AppState } from "../../state/AppState";
-import { BackendService } from "../../services/BackendService";
-import { createBarPrevButton } from "./BarPrevButton";
-import { createBarTaskDisplay } from "./BarTaskDisplay";
-import { createBarStarIndicator } from "./BarStarIndicator";
-import { createBarNextButton } from "./BarNextButton";
+import Widget from 'resource:///com/github/Aylur/ags/widget.js';
+import { toggleMode, state } from "../../state/AppState.ts";
+import { BarPrevButton, BarNextButton } from "./BarNavButtons.ts";
+import { BarTaskDisplay } from "./BarTaskDisplay.ts";
+import { BackendService } from "../../services/BackendService.ts";
 
-export function createBarWidget(state: AppState, backend: BackendService): Widget.Box {
-    const root = new Widget.Box({ orientation: "horizontal", spacing: 12, margin: 16, cssClasses: ["bar-root"] });
+const backend = new BackendService();
 
-    const prevButton = createBarPrevButton(state, backend);
-    const star = createBarStarIndicator();
-    const taskDisplay = createBarTaskDisplay(state, backend);
-    const nextButton = createBarNextButton(state, backend);
-
-    const toggleButton = new Widget.Button({ label: "Calendario", cssClasses: ["bar-toggle-button"] });
-    toggleButton.on("clicked", () => state.toggleMode());
-
-    root.append(prevButton);
-    root.append(star);
-    root.append(taskDisplay, { expand: true });
-    root.append(toggleButton);
-    root.append(nextButton);
-
-    return root;
-}
+export const BarWidget = () => Widget.Box({
+    className: "bar-root",
+    spacing: 12,
+    children: [
+        BarPrevButton(),
+        Widget.Label({ label: "✦", className: "bar-star" }),
+        BarTaskDisplay(),
+        Widget.Button({
+            label: "Calendario",
+            className: "bar-toggle-button",
+            onClicked: async () => {
+                const cal = await backend.getCalendar(state.currentMonthYear.value);
+                state.calendarData.setValue(cal);
+                toggleMode();
+            }
+        }),
+        BarNextButton()
+    ]
+});

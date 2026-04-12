@@ -1,159 +1,200 @@
-:root {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #111111;
-  --text-primary: #f5f5f5;
-  --text-muted: #b8b8b8;
-  --accent-color: #7ca7ff;
-  --border-color: #2a2a2a;
-  --hover-bg: #1a1a1a;
-  --star-active: #f5c518;
-  --past-day-opacity: 0.36;
-  --transition-speed: 180ms;
+/* Reset nativo para evitar los temas azules de GTK/Adwaita */
+button, entry {
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid transparent;
+  box-shadow: none;
+  text-shadow: none;
+  color: @text_primary;
+  outline: none;
+  transition: all 150ms ease;
+}
+
+button:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+button:active {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+entry {
+  border: 1px solid @border_color;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+entry:focus {
+  border-color: @text_primary;
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
 .window {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: @bg_primary;
+  color: @text_primary;
+}
+
+.calendar-window {
+  background-color: @bg_primary;
+  border-radius: 4px;
+  border: 1px solid @border_color;
+  color: @text_primary;
+  min-width: 1300px;
+}
+
+.bar-window {
+  background-color: @bg_primary;
+  border-radius: 16px;
+  border: 1px solid @border_color;
+  color: @text_primary;
 }
 
 .calendar-cell {
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-secondary);
-  padding: 10px;
-  border-radius: 10px;
+  border: 1px solid @border_color;
+  background-color: @bg_secondary;
+  padding: 4px;
+  border-radius: 4px;
+  min-width: 175px;
+  min-height: 105px;
+  transition: all 150ms ease;
 }
 
 .calendar-cell-hovered {
-  border-color: var(--accent-color);
-  background-color: rgba(124, 167, 255, 0.08);
+  border-color: @text_primary;
+  background-color: @hover_bg;
 }
 
-.calendar-cell-actions {
-  justify-content: flex-end;
+.calendar-cell:hover {
+  border-color: @text_primary;
 }
 
 .calendar-add-button {
-  min-width: 24px;
-  min-height: 24px;
-  border-radius: 12px;
+  min-width: 16px;
+  min-height: 16px;
+  padding: 0;
+  font-size: 14px;
+  border-radius: 4px;
   background-color: transparent;
-  color: var(--accent-color);
+  color: @text_primary;
+  border: 1px solid transparent;
+  opacity: 0;
 }
 
-.calendar-grid {
-  width: 100%;
+.calendar-cell-hovered .calendar-add-button,
+.calendar-cell:hover .calendar-add-button {
+  opacity: 1;
 }
 
-.calendar-grid-header {
-  justify-content: space-between;
+.calendar-add-button:hover {
+  border: 1px solid @text_primary;
+  background-color: rgba(255,255,255,0.08);
 }
 
 .calendar-header-cell {
-  flex: 1;
-  text-align: center;
   font-weight: bold;
-  color: var(--text-muted);
+  color: @text_muted;
+  font-size: 12px;
+  letter-spacing: 1px;
 }
 
 .dialog-title {
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0px;
 }
 
 .add-task-dialog {
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-secondary);
-  border-radius: 16px;
-  padding: 16px;
+  border: 1px solid @border_color;
+  background-color: @bg_primary;
+  border-radius: 4px;
+  padding: 20px;
 }
 
 .dialog-error {
-  color: #f46d75;
+  color: #ff4a4a;
 }
 
 .calendar-day {
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .calendar-day-muted {
-  color: rgba(255, 255, 255, 0.32);
+  color: @text_muted;
 }
 
 .task-chip {
-  padding: 6px;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.04);
+  padding: 4px;
+  border-radius: 4px;
+  background-color: @bg_secondary;
+  color: @text_primary;
+  border: 1px solid transparent;
+  transition: all 150ms ease;
+}
+
+.task-chip:hover {
+  background-color: @hover_bg;
+  border-color: @border_color;
 }
 
 .task-chip-featured {
-  color: var(--accent-color);
+  border-color: @text_primary;
 }
 
 .bar-root {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  background-color: @bg_primary;
+  border: 1px solid @border_color;
   border-radius: 16px;
-  padding: 14px;
+  padding: 6px 14px;
 }
 
-.bar-root {
-  align-items: center;
-}
-
-.bar-nav-button {
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 12px;
+.bar-nav-button, .task-chip-checkbox, .task-chip-star, .task-chip-delete, .task-chip-edit {
+  min-width: 16px;
+  min-height: 16px;
+  padding: 0;
+  font-size: 11px;
+  border-radius: 4px;
   background-color: transparent;
-  color: var(--text-primary);
+  color: @text_primary;
+  border: 1px solid transparent;
+}
+
+.bar-nav-button:hover, .task-chip-checkbox:hover, .task-chip-star:hover, .task-chip-delete:hover, .task-chip-edit:hover {
+  border-color: @border_color;
+  background-color: rgba(255,255,255,0.08);
 }
 
 .bar-task-display {
-  padding: 10px;
-  width: 100%;
+  padding: 2px 10px;
 }
 
 .bar-toggle-button {
-  min-width: 110px;
-  min-height: 44px;
-  border-radius: 12px;
-  background-color: var(--accent-color);
-  color: #000000;
+  min-width: 90px;
+  min-height: 28px;
+  border-radius: 4px;
+  background-color: @text_primary;
+  color: @bg_primary;
+  font-weight: 600;
+  border: 1px solid @text_primary;
+}
+
+.bar-toggle-button:hover {
+  opacity: 0.8;
+  background-color: #e0e0e0;
 }
 
 .bar-task-name {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.bar-task-name-marquee {
-  animation: marquee 10s linear infinite;
-  display: inline-block;
+  letter-spacing: 0px;
 }
 
 .bar-task-due {
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-@keyframes marquee {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+  color: @text_muted;
+  font-size: 11px;
 }
 
 .bar-star {
-  color: var(--star-active);
-  font-size: 20px;
-}
-
-.bar-task-display {
-  padding: 10px;
+  color: @star_active;
+  font-size: 16px;
 }

@@ -14,12 +14,10 @@ fi
 
 CONFIG_DIR="$HOME/.config/task-calendar"
 
-# 1. Limpiamos por si acaso
-pkill agsv1 || true
-
-# 2. Transpilamos (esto ya sabemos que funciona perfecto)
-cd ~/.config/task-calendar
-esbuild app.ts --bundle --format=esm --outfile=dist.js --external:resource://* --external:gi://*
-
-# 3. LANZAMOS CON RUTA ABSOLUTA
-agsv1 -c "$PWD/dist.js"
+# Si ya está corriendo nuestra instancia específica, la matamos (Toggle)
+if pgrep -f "agsv1 -c $CONFIG_DIR/dist.js" >/dev/null; then
+    pkill -f "agsv1 -c $CONFIG_DIR/dist.js"
+else
+    # Si no, la lanzamos en segundo plano
+    agsv1 -c "$CONFIG_DIR/dist.js" > /tmp/task-calendar.log 2>&1 &
+fi

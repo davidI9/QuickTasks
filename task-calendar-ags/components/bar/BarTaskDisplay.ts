@@ -1,76 +1,62 @@
-import { Widget } from "ags";
-import { AppState } from "../../state/AppState";
-import { BackendService } from "../../services/BackendService";
-import { TaskItem } from "../../types/TaskListJSON";
+import { state } from "../../state/AppState.ts";
+import Widget from 'resource:///com/github/Aylur/ags/widget.js';
+import { BackendService } from "../../services/BackendService.ts";
 
-function currentTask(state: AppState): TaskItem | null {
-    const list = state.taskList.value;
-    if (!list || list.tasks.length === 0) {
-        return null;
+const backend = new BackendService();
+
+export const BarTaskDisplay = () => Widget.Box({
+    className: "bar-task-display",
+    spacing: 10,
+    hexpand: true,
+    setup: self => {
+        const updateTask = () => {
+            const list = state.taskList.value?.tasks || [];
+            const currentIndex = state.barCurrentIndex.value || 0;
+            const task = list[currentIndex];
+
+            if (!task) {
+                self.children = [Widget.Label("No hay tareas")];
+                return;
+            }
+
+            self.children = [
+                Widget.Button({
+                    className: "task-chip-checkbox",
+                    label: task.completed ? "●" : "○",
+                    onClicked: async () => {
+                        await backend.editTask(task.id, { completed: !task.completed });
+                        const newTasks = await backend.getTaskList();
+                        state.taskList.setValue(newTasks);
+                        
+                        const nextUncompleted = newTasks.tasks.findIndex((t: any) => !t.completed);
+                        if (nextUncompleted !== -1) {
+                            state.barCurrentIndex.setValue(nextUncompleted);
+                            await backend.setFeatured(newTasks.tasks[nextUncompleted].id);
+                        }
+                    }
+                }),
+                Widget.Box({
+                    vertical: true,
+                    hexpand: true,
+                    children: [
+                        Widget.Label({
+                            label: task.name,
+                            className: "bar-task-name",
+                            xalign: 0,
+                            truncate: "end",
+                            css: task.completed ? "text-decoration: line-through; opacity: 0.6;" : ""
+                        }),
+                        Widget.Label({
+                            label: task.dueDate,
+                            className: "bar-task-due",
+                            xalign: 0
+                        })
+                    ]
+                })
+            ];
+        };
+
+        self.hook(state.taskList, updateTask);
+        self.hook(state.barCurrentIndex, updateTask);
     }
-    const visibleTasks = list.tasks.filter((task: TaskItem) => !task.completed);
-    if (visibleTasks.length === 0) {
-        return null;
-    }
-    const featured = state.featuredTaskId.value;
-    if (featured) {
-        const found = visibleTasks.find((task: TaskItem) => task.id === featured);
-        if (found) {
-            const index = visibleTasks.findIndex((task: TaskItem) => task.id === featured);
-            state.barCurrentIndex.set(index);
-            return found;
-        }
-    }
-    const currentIndex = state.barCurrentIndex.value;
-    if (currentIndex >= 0 && currentIndex < visibleTasks.length) {
-        return visibleTasks[currentIndex];
-    }
-    state.barCurrentIndex.set(0);
-    return visibleTasks[0];
-}
-
-export function createBarTaskDisplay(state: AppState, backend: BackendService): Widget.Box {
-    const container = new Widget.Box({ orientation: "vertical", spacing: 6, cssClasses: ["bar-task-display"], hexpand: true });
-    const nameLabel = new Widget.Label({ label: "Cargando...", xalign: 0, cssClasses: ["bar-task-name"] });
-    const dueLabel = new Widget.Label({ label: "", xalign: 0, cssClasses: ["bar-task-due"] });
-    const toggleButton = new Widget.Button({ label: "Marcar" });
-
-    function render(): void {
-        const task = currentTask(state);
-        if (!task) {
-            nameLabel.label = "No hay tareas";
-            dueLabel.label = "";
-            toggleButton.sensitive = false;
-            return;
-        }
-        nameLabel.label = task.name;
-        nameLabel.cssClasses = ["bar-task-name"];
-        if (task.name.length > 30) {
-            nameLabel.cssClasses.push("bar-task-name-marquee");
-        }
-        dueLabel.label = `Vence: ${task.dueDate}`;
-        toggleButton.label = task.completed ? "Desmarcar" : "Marcar";
-        toggleButton.sensitive = true;
-    }
-
-    toggleButton.on("clicked", async () => {
-        const task = currentTask(state);
-        if (!task) {
-            return;
-        }
-        await backend.editTask(task.id, { completed: !task.completed });
-        const list = await backend.getTaskList();
-        state.taskList.set(list);
-        state.featuredTaskId.set(list.featuredTaskId);
-    });
-
-    state.taskList.onChange(render);
-    state.featuredTaskId.onChange(render);
-
-    container.append(nameLabel);
-    container.append(dueLabel);
-    container.append(toggleButton);
-
-    render();
-    return container;
-}
+});

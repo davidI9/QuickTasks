@@ -62,9 +62,25 @@ check_ags() {
     fi
 }
 
+install_esbuild() {
+    if command_exists esbuild; then
+        printf "esbuild (TypeScript compiler) is already installed.\n"
+        return 0
+    fi
+    printf "Installing esbuild (TypeScript compiler)...\n"
+    if command_exists npm; then sudo npm install -g esbuild
+    elif command_exists pacman; then install_packages pacman esbuild
+    elif command_exists apt; then install_packages apt esbuild
+    elif command_exists dnf; then install_packages dnf esbuild
+    else
+        printf "Warning: Please install esbuild manually (e.g. npm install -g esbuild).\n"
+    fi
+}
+
 # Ejecución de chequeos
 install_build_deps
 install_gtk_deps
+install_esbuild
 check_ags
 
 # Compilación de C++
@@ -82,7 +98,11 @@ mkdir -p "$INSTALL_CONFIG"
 # Copiamos binario C++
 cp "$BUILD_DIR/task-calendar" "$INSTALL_BIN/task-calendar"
 
-# Copiamos Frontend (Ahora copiará el código bueno que hemos salvado)
+# Compilación AGS Typescript
+cd "$ROOT/task-calendar-ags"
+esbuild app.ts --bundle --format=esm --outfile=dist.js --external:resource://* --external:gi://*
+
+# Copiamos Frontend (Ahora copiará el código bueno que hemos salvado incluido dist.js)
 cp -r "$ROOT/task-calendar-ags"/* "$INSTALL_CONFIG/"
 
 # Copiamos Script Lanzador

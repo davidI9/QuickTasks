@@ -81,3 +81,14 @@ clean-asan:
 clean-all: clean clean-asan
 
 distclean: clean-all
+
+install: build
+	@echo "== Instalando Task Calendar =="
+	@bash ./install.sh
+
+uninstall:
+	@echo "== Desinstalando Task Calendar =="
+	rm -rf ~/.config/task-calendar
+	rm -f ~/.local/bin/task-calendar
+	rm -f ~/.local/bin/task-calendar-launch
+	@echo "Desinstalación completada."

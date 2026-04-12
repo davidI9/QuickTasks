@@ -1,39 +1,47 @@
-import { Widget } from "ags";
-import { AppState } from "../../state/AppState";
-import { BackendService } from "../../services/BackendService";
-import { CalendarCell } from "../../types/CalendarJSON";
-import { createTaskChip } from "./TaskChip";
-import { showAddTaskDialog } from "./AddTaskDialog";
+import { state } from "../../state/AppState.ts";
+import Widget from 'resource:///com/github/Aylur/ags/widget.js';
+import { CalendarCell } from "../../types/CalendarJSON.ts";
+import { TaskChip } from "./TaskChip.ts";
+import { showAddTaskDialog } from "./AddTaskDialog.ts";
 
-export function createCalendarCellWidget(cell: CalendarCell, state: AppState, backend: BackendService, monthYear: string): Widget.Box {
-    const card = new Widget.Box({ orientation: "vertical", spacing: 6, cssClasses: ["calendar-cell"] });
-    const dayLabel = new Widget.Label({ label: String(cell.day), cssClasses: [cell.isCurrentMonth ? "calendar-day" : "calendar-day-muted"] });
-    const tasksBox = new Widget.Box({ orientation: "vertical", spacing: 3 });
-    const actions = new Widget.Box({ orientation: "horizontal", spacing: 4, cssClasses: ["calendar-cell-actions"] });
-    const addButton = new Widget.Button({ label: "+", cssClasses: ["calendar-add-button"] });
-
-    for (const task of cell.tasks) {
-        tasksBox.append(createTaskChip(task, state, backend, monthYear));
-    }
-
-    addButton.on("clicked", () => {
-        showAddTaskDialog(`${String(cell.day).padStart(2, "0")}/${monthYear}`);
+export const CalendarCellWidget = (cell: CalendarCell) => {
+    return Widget.EventBox({
+        onHover: (self) => { self.child.toggleClassName('calendar-cell-hovered', true);  },
+        onHoverLost: (self) => { self.child.toggleClassName('calendar-cell-hovered', false); },
+        child: Widget.Box({
+            vertical: true,
+            className: cell.isCurrentMonth ? "calendar-cell" : "calendar-cell calendar-day-muted",
+            spacing: 2,
+            children: [
+                Widget.Box({
+                    spacing: 2,
+                    children: [
+                        Widget.Label({
+                            label: String(cell.day),
+                            className: "calendar-day",
+                            hexpand: true,
+                            xalign: 0
+                        }),
+                        Widget.Button({
+                            label: "+",
+                            className: "calendar-add-button",
+                            onClicked: () => {
+                                showAddTaskDialog(`${String(cell.day).padStart(2, "0")}/${state.currentMonthYear.value}`);
+                            }
+                        })
+                    ]
+                }),
+                Widget.Scrollable({
+                    vscroll: "automatic",
+                    hscroll: "never",
+                    vexpand: true,
+                    child: Widget.Box({
+                        vertical: true,
+                        spacing: 2,
+                        children: cell.tasks.map(t => TaskChip(t))
+                    })
+                })
+            ]
+        })
     });
-    actions.append(addButton);
-
-    card.append(dayLabel);
-    card.append(actions);
-    card.append(tasksBox);
-
-    card.on("enter-notify-event", () => {
-        card.cssClasses = [...(card.cssClasses || []), "calendar-cell-hovered"];
-        addButton.visible = true;
-    });
-    card.on("leave-notify-event", () => {
-        card.cssClasses = (card.cssClasses || []).filter((cls: string) => cls !== "calendar-cell-hovered");
-        addButton.visible = false;
-    });
-
-    addButton.visible = false;
-    return card;
-}
+};

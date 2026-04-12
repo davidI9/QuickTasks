@@ -1,44 +1,32 @@
-import { Widget } from "ags";
-import { AppState } from "../../state/AppState";
-import { BackendService } from "../../services/BackendService";
-import { CalendarJSON } from "../../types/CalendarJSON";
-import { createCalendarCellWidget } from "./CalendarCellWidget";
+import { state } from "../../state/AppState.ts";
+import Widget from 'resource:///com/github/Aylur/ags/widget.js';
+import { CalendarCellWidget } from "./CalendarCellWidget.ts";
 
-export function createCalendarGrid(state: AppState, backend: BackendService): Widget.Box {
-    const grid = new Widget.Box({ orientation: "vertical", spacing: 8, cssClasses: ["calendar-grid"] });
-    const dayNames = ["L", "M", "X", "J", "V", "S", "D"];
-
-    function render(calendar: CalendarJSON): void {
-        while (grid.children.length > 0) {
-            grid.remove(grid.children[0]);
-        }
-
-        const headerRow = new Widget.Box({ orientation: "horizontal", spacing: 8, cssClasses: ["calendar-grid-header"] });
-        for (const dayName of dayNames) {
-            headerRow.append(new Widget.Label({ label: dayName, cssClasses: ["calendar-header-cell"] }));
-        }
-        grid.append(headerRow);
-
-        for (let row = 0; row < 6; row += 1) {
-            const rowBox = new Widget.Box({ orientation: "horizontal", spacing: 8 });
-            for (let col = 0; col < 7; col += 1) {
-                const index = row * 7 + col;
-                const cell = calendar.cells[index];
-                rowBox.append(createCalendarCellWidget(cell, state, backend, calendar.monthYear));
+export const CalendarGrid = () => Widget.Box({
+    vertical: true,
+    className: "calendar-grid",
+    spacing: 8,
+    setup: self => self.hook(state.calendarData, () => {
+        const cal = state.calendarData.value;
+        if (!cal || !cal.cells) return;
+        const dayNames = ["L", "M", "X", "J", "V", "S", "D"];
+        const headerRow = Widget.Box({
+            spacing: 8,
+            className: "calendar-grid-header",
+            children: dayNames.map(day => Widget.Label({ label: day, className: "calendar-header-cell", hexpand: true }))
+        });
+        
+        const children = [headerRow];
+        for (let row = 0; row < 6; row++) {
+            const rowBox = Widget.Box({ spacing: 8, homogeneous: true });
+            for (let col = 0; col < 7; col++) {
+                const idx = row * 7 + col;
+                if (cal.cells[idx]) {
+                    rowBox.children = [...rowBox.children, CalendarCellWidget(cal.cells[idx])];
+                }
             }
-            grid.append(rowBox);
+            children.push(rowBox);
         }
-    }
-
-    state.calendarData.onChange((calendar: CalendarJSON | null) => {
-        if (calendar) {
-            render(calendar);
-        }
-    });
-
-    if (state.calendarData.value) {
-        render(state.calendarData.value);
-    }
-
-    return grid;
-}
+        self.children = children;
+    })
+});

@@ -1,34 +1,41 @@
-import { Widget } from "ags";
-import { AppState } from "../../state/AppState";
-import { BackendService } from "../../services/BackendService";
+import { state } from "../../state/AppState.ts";
+import Widget from 'resource:///com/github/Aylur/ags/widget.js';
+import { BackendService } from "../../services/BackendService.ts";
 
-export function createCalendarHeader(state: AppState, backend: BackendService): Widget.Box {
-    const previous = new Widget.Button({ label: "◀" });
-    const title = new Widget.Label({ label: state.currentMonthYear.value, xalign: 0.5 });
-    const next = new Widget.Button({ label: "▶" });
+const backend = new BackendService();
 
-    const header = new Widget.Box({ orientation: "horizontal", spacing: 10, margin: 12 });
-    header.append(previous);
-    header.append(title, { expand: true });
-    header.append(next);
-
-    state.currentMonthYear.onChange((value: string) => {
-        title.label = value;
-    });
-
-    previous.on("clicked", async () => {
-        const [month, year] = state.currentMonthYear.value.split("/").map(Number);
-        const date = new Date(year, month - 2, 1);
-        const nextValue = `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
-        state.currentMonthYear.set(nextValue);
-    });
-
-    next.on("clicked", async () => {
-        const [month, year] = state.currentMonthYear.value.split("/").map(Number);
-        const date = new Date(year, month, 1);
-        const nextValue = `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
-        state.currentMonthYear.set(nextValue);
-    });
-
-    return header;
-}
+export const CalendarHeader = () => Widget.Box({
+    className: "calendar-header",
+    spacing: 12,
+    children: [
+        Widget.Button({
+            className: "calendar-nav-button",
+            label: "◀",
+            onClicked: () => {
+                const parts = state.currentMonthYear.value.split("/");
+                const date = new Date(Number(parts[1]), Number(parts[0]) - 2, 1);
+                const nextValue = `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
+                state.currentMonthYear.setValue(nextValue);
+                backend.getCalendar(nextValue).then(c => state.calendarData.setValue(c));
+            }
+        }),
+        Widget.Label({
+            className: "calendar-title",
+            label: state.currentMonthYear.bind(),
+            xalign: 0.5,
+            hexpand: true,
+            css: "font-weight: bold; font-size: 18px;"
+        }),
+        Widget.Button({
+            className: "calendar-nav-button",
+            label: "▶",
+            onClicked: () => {
+                const parts = state.currentMonthYear.value.split("/");
+                const date = new Date(Number(parts[1]), Number(parts[0]), 1);
+                const nextValue = `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
+                state.currentMonthYear.setValue(nextValue);
+                backend.getCalendar(nextValue).then(c => state.calendarData.setValue(c));
+            }
+        })
+    ]
+});

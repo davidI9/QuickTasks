@@ -36,9 +36,11 @@ initData();
 
 // LA MAGIA: Simplemente exportamos la configuración por defecto y AGS hace el resto.
 // Esto evita tener que importar "App" y romper GJS.
-export default {
+import App from 'resource:///com/github/Aylur/ags/app.js';
+
+App.config({
     windows: [
         CalendarWindow,
         BarWindow
     ]
-};
+});

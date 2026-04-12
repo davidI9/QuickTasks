@@ -25,34 +25,34 @@ const initialState: AppStateType = {
 export const state = createState(initialState);
 
 export function toggleMode(): void {
-    state.mode.set(state.mode.value === "calendar" ? "bar" : "calendar");
+    state.mode.setValue(state.mode.value === "calendar" ? "bar" : "calendar");
 }
 
 export function setFeaturedTaskId(id: string | null): void {
-    state.featuredTaskId.set(id);
+    state.featuredTaskId.setValue(id);
 }
 
 export function setCurrentMonthYear(monthYear: string): void {
-    state.currentMonthYear.set(monthYear);
+    state.currentMonthYear.setValue(monthYear);
 }
 
 export function setCalendarData(data: any): void {
-    state.calendarData.set(data);
+    state.calendarData.setValue(data);
 }
 
 export function setTaskList(list: any): void {
-    state.taskList.set(list);
+    state.taskList.setValue(list);
 }
 
 export function setBarCurrentIndex(index: number): void {
-    state.barCurrentIndex.set(index);
+    state.barCurrentIndex.setValue(index);
 }
 
 export function setLoading(loading: boolean): void {
-    state.loading.set(loading);
+    state.loading.setValue(loading);
 }
 
 export function setError(error: string | null): void {
-    state.error.set(error);
+    state.error.setValue(error);
 }
 
