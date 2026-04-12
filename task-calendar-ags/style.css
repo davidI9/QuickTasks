@@ -44,6 +44,7 @@ entry:focus {
 
 .bar-window {
   background-color: @bg_primary;
+  opacity: 0.85;
   border-radius: 16px;
   border: 1px solid @border_color;
   color: @text_primary;
