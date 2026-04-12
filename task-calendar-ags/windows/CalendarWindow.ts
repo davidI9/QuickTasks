@@ -5,9 +5,11 @@ import { CalendarWidget } from '../components/calendar/CalendarWidget.ts';
 export const CalendarWindow = Widget.Window({
     name: "calendar",
     className: "calendar",
-    layer: "overlay",
+    layer: "top",
+    exclusivity: "exclusive",
     anchor: [],
     margins: [10, 10],
+    visible: state.mode.value === "calendar",
     keymode: "on-demand",
     css: "background-color: transparent;",
     setup: self => self.hook(state.mode, () => {

@@ -1,4 +1,4 @@
-# PLAN.md — Task Calendar Widget: Master Design Document
+# ARCHITECTURE.md — Task Calendar Widget: Master Design Document
 
 ---
 

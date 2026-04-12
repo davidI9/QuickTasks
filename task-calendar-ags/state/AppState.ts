@@ -1,5 +1,10 @@
 import { createState } from "../lib/state";
 
+const today = new Date();
+const currentMonth = String(today.getMonth() + 1).padStart(2, '0'); // Sumamos 1 porque enero es 0
+const currentYear = today.getFullYear();
+const actualMonthYear = `${currentMonth}/${currentYear}`;
+
 interface AppStateType {
     mode: any; // Variable
     currentMonthYear: any; // Variable
@@ -12,8 +17,8 @@ interface AppStateType {
 }
 
 const initialState: AppStateType = {
-    mode: "calendar",
-    currentMonthYear: "04/2026",
+    mode: "bar",
+    currentMonthYear: actualMonthYear,
     calendarData: null,
     taskList: null,
     featuredTaskId: null,

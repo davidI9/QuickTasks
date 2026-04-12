@@ -11,9 +11,13 @@ function createState(initial) {
 }
 
 // state/AppState.ts
+var today = /* @__PURE__ */ new Date();
+var currentMonth = String(today.getMonth() + 1).padStart(2, "0");
+var currentYear = today.getFullYear();
+var actualMonthYear = `${currentMonth}/${currentYear}`;
 var initialState = {
-  mode: "calendar",
-  currentMonthYear: "04/2026",
+  mode: "bar",
+  currentMonthYear: actualMonthYear,
   calendarData: null,
   taskList: null,
   featuredTaskId: null,
@@ -535,9 +539,11 @@ var CalendarWidget = () => Widget7.Box({
 var CalendarWindow = Widget8.Window({
   name: "calendar",
   className: "calendar",
-  layer: "overlay",
+  layer: "top",
+  exclusivity: "exclusive",
   anchor: [],
   margins: [10, 10],
+  visible: state.mode.value === "calendar",
   keymode: "on-demand",
   css: "background-color: transparent;",
   setup: (self) => self.hook(state.mode, () => {
@@ -679,6 +685,7 @@ var BarWindow = Widget12.Window({
   exclusivity: "exclusive",
   anchor: ["top", "left", "right"],
   margins: [20, 20, -10, 70],
+  visible: state.mode.value === "bar",
   keymode: "on-demand",
   css: "background-color: transparent;",
   setup: (self) => self.hook(state.mode, () => {

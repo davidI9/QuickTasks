@@ -9,6 +9,7 @@ export const BarWindow = Widget.Window({
     exclusivity: "exclusive",
     anchor: ["top", "left", "right"],
     margins: [20, 20, -10, 70],
+    visible: state.mode.value === "bar",
     keymode: "on-demand",
     css: "background-color: transparent;",
     setup: self => self.hook(state.mode, () => {

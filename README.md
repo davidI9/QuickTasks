@@ -31,7 +31,7 @@ task-calendar-launch
 Para integrar QuickTasks en Hyprland, añade el siguiente snippet a tu `hyprland.conf`:
 
 ```ini
-bind = MOD+SHIFT+T, exec, ~/.local/bin/task-calendar-launch
+bind = SUPER, T, exec, ~/.local/bin/task-calendar-launch
 ```
 
 ## Estructura
