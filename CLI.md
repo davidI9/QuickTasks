@@ -41,12 +41,12 @@ Para añadir una nueva tarea, utiliza el comando ```add``` seguido del título, 
 **Sintaxis**:
 
 ```Bash
-task-calendar add "<título>" "<fecha: AAAA-MM-DD>" "<prioridad: 1-3>"
+task-calendar add "<título>" "<fecha: DD/MM/YYYY>" "<prioridad: 1-3>"
 ```
 **Ejemplo**:
 
 ```Bash
-task-calendar add "Comprar pan" "2024-05-20" "1"
+task-calendar add "Comprar pan" "20/04/2026" "1"
 ```
 ### 2. Ver Tareas
 Puedes listar todas las tareas guardadas en la base de datos local.
@@ -71,7 +71,7 @@ task-calendar edit <id> "<nuevo_título>" "<nueva_fecha>" "<nueva_prioridad>"
 **Ejemplo:**
 
 ```Bash
-task-calendar edit 42 "Comprar pan integral" "2024-05-21" "2"
+task-calendar edit 42 "Comprar pan integral" "21/04/2026" "2"
 ```
 
 ### 4. Eliminar una Tarea
