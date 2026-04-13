@@ -53,6 +53,38 @@ To integrate QuickTasks into Hyprland, add the following snippet to your hyprlan
 bind = SUPER, T, exec, ~/.local/bin/task-calendar-launch
 ```
 
+### Caelestia Compatibility (Known Issue)
+QuickTasks can be non-interactive in Bar mode when used together with Caelestia in some Hyprland setups.
+
+This is usually caused by a full-screen Caelestia layer capturing pointer input while visually transparent.
+
+Even with this limitation, QuickTasks is designed for strong integration with Caelestia and we expect this behavior to improve in future updates. At the moment, the bug only affects Bar mode when there is no tab/window open in the current workspace. Calendar view continues to work normally because its layer is over Caelestia's by default.
+
+#### Current status
+- This is treated as a known external compatibility issue.
+- QuickTasks includes a best-effort Hyprland rule through `install.sh`.
+- Full input behavior depends on how Caelestia publishes its layers.
+
+#### Recommended rule in `hyprland.conf`
+```bash
+layerrule = order 1, match:namespace bar
+```
+
+#### Diagnostics
+Use these commands to inspect active layers and options:
+
+```bash
+hyprctl -j layers
+hyprctl -j clients
+hyprctl getoption misc:layers_hog_keyboard_focus
+```
+
+If a Caelestia namespace appears as a full-screen layer above `bar`, clicks may not reach QuickTasks.
+
+#### Workaround expectations
+- QuickTasks can only apply local ordering and margins.
+- If another app keeps a full-screen interactive layer above it, QuickTasks cannot force pointer pass-through from outside that app.
+
 ### Structure
 The AGS frontend is located in the task-calendar-ags/ directory, and the C++ backend handles the rest of the repository.
 

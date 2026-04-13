@@ -682,7 +682,7 @@ var BarWidget = () => Widget11.Box({
 var BarWindow = Widget12.Window({
   name: "bar",
   className: "bar",
-  layer: "bottom",
+  layer: "top",
   exclusivity: "exclusive",
   anchor: ["top", "left", "right"],
   margins: [20, 20, -10, 70],

@@ -77,6 +77,93 @@ install_esbuild() {
     fi
 }
 
+configure_hyprland_rule() {
+    local hyprland_conf=""
+    local hyprland_candidates=(
+        "$HOME/.config/hypr/hyprland.conf"
+        "$HOME/.conf/hypr/hyprland.conf"
+    )
+    local layer_rule='layerrule = order 1, match:namespace bar'
+        local legacy_rule='layerrule = order 1, namespace:bar'
+
+    for candidate in "${hyprland_candidates[@]}"; do
+        if [[ -e "$candidate" ]]; then
+            hyprland_conf="$candidate"
+            break
+        fi
+    done
+
+    if [[ -z "$hyprland_conf" ]]; then
+        echo "Warning: no encuentro ${hyprland_candidates[0]} ni ${hyprland_candidates[1]}."
+        echo "Si usas Caelestia, añade manualmente esta regla exacta en Hyprland:"
+        echo "$layer_rule"
+        return 0
+    fi
+
+    if [[ ! -r "$hyprland_conf" || ! -w "$hyprland_conf" ]]; then
+        echo "Warning: no tengo permisos de lectura/escritura sobre $hyprland_conf."
+        echo "Si usas Caelestia, añade manualmente esta regla exacta en Hyprland:"
+        echo "$layer_rule"
+        return 0
+    fi
+
+    if grep -Fxq "$layer_rule" "$hyprland_conf"; then
+        printf "Hyprland ya contiene la regla de QuickTasks.\n"
+        return 0
+    fi
+
+    if grep -Eq 'layerrule[[:space:]]*=[[:space:]]*order[[:space:]]*1,[[:space:]]*namespace:bar' "$hyprland_conf"; then
+        python3 - "$hyprland_conf" "$layer_rule" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+replacement = sys.argv[2]
+text = path.read_text()
+lines = text.splitlines()
+updated = []
+changed = False
+
+for line in lines:
+    if line.lstrip().startswith('layerrule') and 'namespace:bar' in line:
+        updated.append(replacement)
+        changed = True
+    else:
+        updated.append(line)
+
+new_text = '\n'.join(updated)
+if text.endswith('\n'):
+    new_text += '\n'
+
+if changed:
+    path.write_text(new_text)
+    print(f"Regla corregida en {path}")
+else:
+    print(f"No se encontraron cambios en {path}")
+PY
+        return 0
+    fi
+
+    echo "No se encontró la regla de QuickTasks en $hyprland_conf."
+    if [[ -t 0 ]]; then
+        read -r -p "¿Quieres añadirla al final del archivo? [y/N] " reply
+        if [[ "$reply" =~ ^[Yy]$ ]]; then
+            {
+                echo
+                echo "# QuickTasks"
+                echo "$layer_rule"
+            } >> "$hyprland_conf"
+            printf "Regla añadida a %s\n" "$hyprland_conf"
+        else
+            printf "Regla no añadida.\n"
+        fi
+    else
+        echo "Warning: no puedo pedir confirmación interactiva."
+        echo "Si usas Caelestia, añade manualmente esta regla exacta en Hyprland:"
+        echo "$layer_rule"
+    fi
+}
+
 # Ejecución de chequeos
 install_build_deps
 install_gtk_deps
@@ -107,6 +194,8 @@ cp -r "$ROOT/task-calendar-ags"/* "$INSTALL_CONFIG/"
 
 # Copiamos Script Lanzador
 cp "$ROOT/launch.sh" "$INSTALL_BIN/task-calendar-launch"
+
+configure_hyprland_rule
 
 printf "\n✅ Instalación completada con éxito.\n"
 printf "Backend C++: %s/task-calendar\n" "$INSTALL_BIN"

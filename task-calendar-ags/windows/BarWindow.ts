@@ -5,7 +5,7 @@ import { BarWidget } from '../components/bar/BarWidget.ts';
 export const BarWindow = Widget.Window({
     name: "bar",
     className: "bar",
-    layer: "bottom",
+    layer: "top",
     exclusivity: "exclusive",
     anchor: ["top", "left", "right"],
     margins: [20, 20, -10, 70],
